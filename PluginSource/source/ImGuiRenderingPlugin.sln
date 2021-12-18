@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CImGuiShared", "..\cimgui\b
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CImGuiStatic", "..\cimgui\build\CImGuiStatic\CImGuiStatic.vcxproj", "{8BAF868D-7712-1632-2098-4EE80CDAE1B4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnityImGuiRenderer", "UnityImGuiRenderer.vcxproj", "{903625AF-7C1A-E604-E57A-E057D17DD086}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGuiRenderingPlugin", "ImGuiRenderingPlugin.vcxproj", "{903625AF-7C1A-E604-E57A-E057D17DD086}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

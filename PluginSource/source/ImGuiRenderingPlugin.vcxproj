@@ -46,7 +46,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\win\debug\</OutDir>
     <IntDir>projectfiles\Debug\</IntDir>
-    <TargetName>UnityImGuiRenderer</TargetName>
+    <TargetName>ImGuiRenderingPlugin</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -72,7 +72,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>cimgui.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\cimgui\win\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ImportLibrary>..\win\debug\UnityImGuiRenderer.lib</ImportLibrary>
+      <ImportLibrary>..\win\debug\ImGuiRenderingPlugin.lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
