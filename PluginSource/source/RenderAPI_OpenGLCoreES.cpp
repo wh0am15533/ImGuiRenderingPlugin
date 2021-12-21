@@ -41,6 +41,8 @@ public:
 	ImTextureID CreateImGuiFontsTexture(void* pixels, int width, int height, int bytesPerPixel) override;
     virtual void ProcessImGuiCommandList(ImDrawData* drawData);
 
+	void FlipMatrix();
+
 private:
 	void CreateResources();
 
@@ -205,4 +207,11 @@ ImTextureID RenderAPI_OpenGLCoreES::CreateImGuiFontsTexture(void* pixels, int wi
 void RenderAPI_OpenGLCoreES::ProcessImGuiCommandList(ImDrawData* drawData)
 {
 }
+
+static bool imgui_FlipMatrix = false; // J.E
+void RenderAPI_OpenGLCoreES::FlipMatrix() // J.E
+{
+	imgui_FlipMatrix = !imgui_FlipMatrix;
+}
+
 #endif // #if SUPPORT_OPENGL_UNIFIED

@@ -217,6 +217,8 @@ public:
     ImTextureID CreateImGuiFontsTexture(void* pixels, int width, int height, int bytesPerPixel) override;
     void ProcessImGuiCommandList(ImDrawData* drawData) override;
 
+	void FlipMatrix(); // J.E
+
 private:
 	ID3D12Resource* GetUploadResource(UINT64 size);
 	void CreateResources();
@@ -256,6 +258,7 @@ private:
     UINT             g_frameIndex = UINT_MAX;
 };
 
+static bool imgui_FlipMatrix = false; // J.E
 
 void RenderAPI_D3D12::ImGui_ImplDX12_SetupRenderState(ImDrawData* draw_data, RenderAPI_D3D12::FrameResources* fr)
 {
@@ -271,14 +274,14 @@ void RenderAPI_D3D12::ImGui_ImplDX12_SetupRenderState(ImDrawData* draw_data, Ren
 		// Inverted Window Fix (Expanded for Depth) - J.E.
 		float depth = 0.7f;
 		float finalDepth = GetUsesReverseZ() ? 1.0f - depth : depth;
-		float mvp[16] =
+		float mvpInvertY[16] =
 		{
 			2.0f / (R - L), 0.0f, 0.0f, 0.0f,
 			0.0f, -(2.0f / (T - B)), 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
 			(R + L) / (L - R), -((T + B) / (B - T)), finalDepth, 1.0f,
 		};
-		/* ORIG - IL2Cpp window is inverted 
+		// ORIG - IL2Cpp window is inverted 
         float mvp[4][4] =
         {
             { 2.0f / (R - L), 0.0f, 0.0f, 0.0f },
@@ -286,8 +289,15 @@ void RenderAPI_D3D12::ImGui_ImplDX12_SetupRenderState(ImDrawData* draw_data, Ren
             { 0.0f, 0.0f, 0.5f, 0.0f },
             { (R + L) / (L - R),  (T + B) / (B - T), 0.5f, 1.0f },
         };
-		*/
-        memcpy(&vertex_constant_buffer.mvp, mvp, sizeof(mvp));
+		
+		if (imgui_FlipMatrix)
+		{
+			memcpy(&vertex_constant_buffer.mvp, mvpInvertY, sizeof(mvpInvertY));
+		}
+		else
+		{
+			memcpy(&vertex_constant_buffer.mvp, mvp, sizeof(mvp));
+		}
     }
 
     // Setup viewport
@@ -333,7 +343,6 @@ RenderAPI* CreateRenderAPI_D3D12()
 
 
 const UINT kNodeMask = 0;
-
 
 RenderAPI_D3D12::RenderAPI_D3D12()
 	: s_D3D12(NULL)
@@ -907,4 +916,10 @@ void RenderAPI_D3D12::ProcessImGuiCommandList(ImDrawData* drawData)
 
     s_D3D12->ExecuteCommandList(g_pd3dCommandList, 1, nullptr);
 }
+
+void RenderAPI_D3D12::FlipMatrix() // J.E
+{
+	imgui_FlipMatrix = !imgui_FlipMatrix;
+}
+
 #endif // #if SUPPORT_D3D12

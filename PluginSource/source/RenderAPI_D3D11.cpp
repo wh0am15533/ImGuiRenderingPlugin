@@ -25,6 +25,9 @@ public:
 
 	ImTextureID CreateImGuiFontsTexture(void* pixels, int width, int height, int bytesPerPixel) override;
     void ProcessImGuiCommandList(ImDrawData* drawData) override;
+
+	void FlipMatrix(); // J.E
+
 private:
 	void CreateResources();
 	void ReleaseResources();
@@ -40,7 +43,6 @@ private:
 	ID3D11BlendState* m_BlendState;
 	ID3D11DepthStencilState* m_DepthState;
 };
-
 
 RenderAPI* CreateRenderAPI_D3D11()
 {
@@ -127,6 +129,8 @@ static ID3D11DepthStencilState* g_pDepthStencilState = NULL;
 static int g_VertexBufferSize = 5000;
 static int g_IndexBufferSize = 10000;
 //END IMGUI VARS
+
+static bool imgui_FlipMatrix = false; // J.E
 
 void RenderAPI_D3D11::CreateResources()
 {
@@ -405,6 +409,23 @@ void RenderAPI_D3D11::ProcessImGuiCommandList(ImDrawData* drawData)
 		// Inverted Window Fix (Expanded for Depth) - J.E.
 		float depth = 0.7f;
 		float finalDepth = GetUsesReverseZ() ? 1.0f - depth : depth;
+		float mvpInvertY[4][4] =
+		{
+			{ 2.0f / (R - L), 0.0f, 0.0f, 0.0f },
+			{ 0.0f, -(2.0f / (T - B)), 0.0f, 0.0f },
+			{ 0.0f, 0.0f, 1.0f, 0.0f },
+			{ (R + L) / (L - R), -((T + B) / (B - T)), finalDepth, 1.0f },
+		};
+
+		float mvp[4][4] =
+		{
+			{ 2.0f / (R - L), 0.0f, 0.0f, 0.0f },
+			{ 0.0f, 2.0f / (T - B), 0.0f, 0.0f },
+			{ 0.0f, 0.0f, 0.5f, 0.0f },
+			{ (R + L) / (L - R), (T + B) / (B - T), 0.5f, 1.0f },
+		};
+
+		/* Inverted Window Fix - J.E.
 		float mvp[16] = 
 		{
 			2.0f / (R - L), 0.0f, 0.0f, 0.0f,
@@ -413,7 +434,6 @@ void RenderAPI_D3D11::ProcessImGuiCommandList(ImDrawData* drawData)
 			(R + L) / (L - R), -((T + B) / (B - T)), finalDepth, 1.0f,
 		};
 
-		/* Inverted Window Fix - J.E.
         float mvp[4][4] =
         {
             { 2.0f/(R - L), 0.0f, 0.0f, 0.0f },
@@ -422,7 +442,7 @@ void RenderAPI_D3D11::ProcessImGuiCommandList(ImDrawData* drawData)
             { (R + L)/(L - R), -((T + B)/(B - T)), 0.5f, 1.0f },
         };
 		*/
-		/* ORIG - Inverted Window in injected IL2CPP
+		/* ORIG - Inverted Window in injected IL2CPP, works in Mono and Editor
 		float mvp[4][4] =
         {
             { 2.0f/(R - L), 0.0f, 0.0f, 0.0f },
@@ -432,8 +452,16 @@ void RenderAPI_D3D11::ProcessImGuiCommandList(ImDrawData* drawData)
         };
 		*/
 		
-        memcpy(&constant_buffer->mvp, mvp, sizeof(mvp));
-        ctx->Unmap(g_pVertexConstantBuffer, 0);
+		if (imgui_FlipMatrix)
+		{
+			memcpy(&constant_buffer->mvp, mvpInvertY, sizeof(mvpInvertY));
+		}
+		else
+		{
+	        memcpy(&constant_buffer->mvp, mvp, sizeof(mvp));
+		}
+        
+		ctx->Unmap(g_pVertexConstantBuffer, 0);
     }
 
     //// Backup DX state that will be modified to restore it afterwards (unfortunately this is very ugly looking and verbose. Close your eyes!)
@@ -550,4 +578,10 @@ void RenderAPI_D3D11::ProcessImGuiCommandList(ImDrawData* drawData)
     ctx->IASetInputLayout(old.InputLayout); if (old.InputLayout) old.InputLayout->Release();
     ctx->Release();
 }
+
+void RenderAPI_D3D11::FlipMatrix() // J.E
+{
+	imgui_FlipMatrix = !imgui_FlipMatrix;
+}
+
 #endif // #if SUPPORT_D3D11

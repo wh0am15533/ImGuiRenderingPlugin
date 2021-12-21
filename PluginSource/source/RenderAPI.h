@@ -28,6 +28,8 @@ public:
 
 	virtual ImTextureID CreateImGuiFontsTexture(void* pixels, int width, int height, int bytesPerPixel) = 0;
     virtual void ProcessImGuiCommandList(ImDrawData* drawData) = 0;
+
+	virtual void FlipMatrix() = 0;
 };
 
 

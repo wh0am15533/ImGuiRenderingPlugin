@@ -1,4 +1,3 @@
-// Example low level rendering Unity plugin
 
 #include "PlatformBase.h"
 #include "RenderAPI.h"
@@ -23,7 +22,6 @@ static void DebugInUnity(std::string message, int type)
 
 // --------------------------------------------------------------------------
 // UnitySetInterfaces
-
 static void UNITY_INTERFACE_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType eventType);
 
 static IUnityInterfaces* s_UnityInterfaces = NULL;
@@ -48,7 +46,7 @@ extern "C" void	UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginLoad(IUnit
 {
 	DebugInUnity("wh0am15533 IMGUI Plugin Load", 1);
 	s_UnityInterfaces = unityInterfaces;
-
+	
 	s_Graphics = s_UnityInterfaces->Get<IUnityGraphics>();
 	s_Graphics->RegisterDeviceEventCallback(OnGraphicsDeviceEvent);
 
@@ -88,7 +86,6 @@ extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API RegisterPlugin()
 
 // --------------------------------------------------------------------------
 // GraphicsDeviceEvent
-
 static RenderAPI* s_CurrentAPI = NULL;
 static UnityGfxRenderer s_DeviceType = kUnityGfxRendererNull;
 
@@ -149,13 +146,26 @@ extern "C" UnityRenderingEvent UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetRen
 }
 
 // --------------------------------------------------------------------------
-// Our Custom Functions for the Plugins
+// Our Custom Functions for the Plugin
+
+// ref: https://answers.unity.com/questions/1184386/calling-unitypluginload-manually.html
+extern "C" uint64_t UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetUnityInterfacesPtr()
+{
+	return reinterpret_cast<uint64_t>(s_UnityInterfaces);
+}
+/*
+extern "C" IUnityInterfaces* UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetUnityInterfacesPtr()
+{
+	return s_UnityInterfaces;
+}
+*/
 
 extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API CheckAPI()
 {
+	DebugInUnity("wh0am15533 IMGUI Plugin", 1);
 	DebugInUnity("=========================", 1);
 	DebugInUnity("Internal API Check...", 1);
-
+	
 	std::string dType = "";
 	switch (s_DeviceType)
 	{
@@ -234,3 +244,7 @@ extern "C" ImTextureID UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GenerateImGuiF
 	else { DebugInUnity("s_CurrentAPI is NULL!", 3); return NULL; }
 }
 
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API FlipMatrix()
+{
+	s_CurrentAPI->FlipMatrix();
+}
