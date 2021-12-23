@@ -2,6 +2,8 @@
 
 [Dear ImGui](https://github.com/ocornut/imgui) within Unity injected at runtime, using [ImGui.NET](https://github.com/mellinoe/ImGui.NET) and the [Unity Low-level native plug-in interface](https://docs.unity3d.com/Manual/NativePluginInterface.html). 
 
+Use's Dear ImGui v1.82 with docking and viewport support. At this time v1.85 breaks the input in Unity, but I'm working on that. v1.85 doesn't really include any new features but it has a bunch of touch-ups and some fixes for some issues.
+
 Includes Plugins Patching tool to patch the game to preload the plugin for newer Unity versions, otherwise the plugin will never get the required UnityInterfaces pointer from Unity. Run this with path to gme data folder if the API check fails when you load the plugin.
 
 Example projects for both IL2Cpp and Mono are included. They were designed to support BepInEx, however you can use other loader/injection methods.
