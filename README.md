@@ -4,7 +4,7 @@
 
 Use's Dear ImGui v1.82 with docking and viewport support. At this time v1.85 breaks the input in Unity, but I'm working on that. v1.85 doesn't really include any new features but it has a bunch of touch-ups and some fixes for some issues.
 
-Includes Plugins Patching tool to patch the game to preload the plugin for newer Unity versions, otherwise the plugin will never get the required UnityInterfaces pointer from Unity. Run this with path to gme data folder if the API check fails when you load the plugin.
+Includes Plugins Patching tool to patch the game to preload the plugin for newer Unity versions, otherwise the plugin will never get the required UnityInterfaces pointer from Unity. Without the interfaces point, this wouldn't work as a Native Rendering Plugin since Unity provides no way to obtain it. If you build a game, no problem, Unity will add the reference's to the build, however, when injecting into a game there's no reference to the plugin so Unity doesn't automatically call UnityPluginLoad. This tool will add those refences. Run it with path to gme data folder if the API check fails when you load the plugin.
 
 Example projects for both IL2Cpp and Mono are included. They were designed to support BepInEx, however you can use other loader/injection methods.
 
