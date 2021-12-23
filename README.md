@@ -1,6 +1,6 @@
 # ImGui Rendering Plugin - Unity Runtime
 
-[Dear ImGui](https://github.com/ocornut/imgui) within Unity injected at runtime, using [ImGui.NET](https://github.com/mellinoe/ImGui.NET) and the [Unity Low-level native plug-in interface](https://docs.unity3d.com/Manual/NativePluginInterface.html). 
+[Dear ImGui](https://github.com/ocornut/imgui) within Unity injected at runtime, using [ImGui.NET](https://github.com/mellinoe/ImGui.NET) and the [Unity Low-level native plug-in interface](https://docs.unity3d.com/Manual/NativePluginInterface.html). Although it's geared for injection at runtime, it can also be used within the Unity Editor. There's a few repo's that implement ImGui in Unity, however they only work within the Unity Editor, none support runtime injection.
 
 Use's Dear ImGui v1.82 with docking and viewport support. At this time v1.85 breaks the input in Unity, but I'm working on that. v1.85 doesn't really include any new features but it has a bunch of touch-ups and some fixes for some issues.
 
