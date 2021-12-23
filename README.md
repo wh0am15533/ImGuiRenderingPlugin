@@ -1,18 +1,11 @@
 # ImGui Rendering Plugin
 
-[Dear ImGui](https://github.com/ocornut/imgui) within Unity thanks to [ImGui.NET](https://github.com/mellinoe/ImGui.NET) and the [Unity Low-level native plug-in interface](https://docs.unity3d.com/Manual/NativePluginInterface.html). 
+[Dear ImGui](https://github.com/ocornut/imgui) within Unity injected at runtime, using [ImGui.NET](https://github.com/mellinoe/ImGui.NET) and the [Unity Low-level native plug-in interface](https://docs.unity3d.com/Manual/NativePluginInterface.html). 
 
-To build use premake on the PluginSource/source folder. Built assemblies will be placed into the unity project on build.
+Includes Plugins Patching tool to patch the game to preload the plugin for newer Unity versions, otherwise the plugin will never get the required UnityInterfaces pointer from Unity. Run this with path to gme data folder if the API check fails when you load the plugin.
 
-# TODO (Help Required)
+Example projects for both IL2Cpp and Mono are included. They were designed to support BepInEx, however you can use other loader/injection methods.
 
- - [x] DX11 renderer.
- - [x] Clean up the DX11 renderer.
- - [x] Figure out how calling ImGui callbacks is going to work, as they currently crash unity.
- - [x] Cleanup the project structure as a whole. (.gitignore is uploading things it shouldn't, ImGui.NET should be a submodule etc.)
- - [x] DX12 renderer.
- - [ ] Vulkan renderer.
- - [ ] Metal renderer.
- - [x] OpenGL renderer.
- - [ ] OpenGLES renderer.
- - [ ] Add VR support, by allowing ImGui to be rendered onto a Unity texture, and displayed within 3D space.
+![alt text](https://i.imgur.com/TRN03cZ.png)
+
+![alt text](https://i.imgur.com/Kd8qAcW.png)
