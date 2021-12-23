@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="ILRepacker" AfterTargets="Build">
+    <Move SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFiles="$(OutputPath)\$(AssemblyName)1.dll" />
+
+    <ItemGroup>
+      <InputAssemblies Include="$(OutputPath)\$(AssemblyName)1.dll" />
+      <InputAssemblies Include="$(OutputPath)\ImGui.NET.dll" />
+    </ItemGroup>
+
+    <ILRepack
+      Parallel="true"
+      Internalize="true"
+      DebugInfo="false"
+      LibraryPath="C:\Users\James\Documents\Visual Studio 2017\Projects\IMGUI Testing\UnityImGUI\ImGuiRenderingPlugin\Examples\TrainerExampleMono\Libs\ImGui.Net;C:\Games\Sophies Safecracking Simulator\BepInEx\core"      
+      InputAssemblies="@(InputAssemblies)"
+      TargetKind="Dll"
+      TargetPlatformVersion="v2"
+      OutputFile="$(OutputPath)\$(AssemblyName).dll"
+    />
+
+    <Delete Files="@(InputAssemblies)" />
+    <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="C:\Games\Sophies Safecracking Simulator\BepInEx\plugins" />
+  </Target>
+</Project>
