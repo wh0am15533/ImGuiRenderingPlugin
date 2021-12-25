@@ -13,3 +13,7 @@ Testing done on Unity versions 2018.1 through Current. Require's a game using .N
 ![alt text](https://i.imgur.com/TRN03cZ.png)
 
 ![alt text](https://i.imgur.com/Kd8qAcW.png)
+
+Usage:
+   Place cimgui.dll and ImGuiRenderingPlugin.dll into the game's Data\Plugins folder (Either X86 or X86_64).
+   Place Trainer.dll and System.Runtime.CompilerServices.Unsafe.dll into BepInEx\plugins folder (Some Mono Unity versions will also require System.Runtime.dll) These libs are included in the BepInEx Dependencies.rar file under the libs folder.
