@@ -8,7 +8,7 @@ Includes Plugins Patching tool to patch the game to preload/initialize the plugi
 
 Example projects for both IL2Cpp and Mono are included. They were designed to support BepInEx, however you can use other loader/injection methods. Some good code example's for building window components can be found here at this excellent repo: [UImGui](https://github.com/psydack/uimgui) (If your using in the Unity Editor, I highly recommend using this project)
 
-Testing done on Unity versions 2018.1 through Current. Does not support 32bit yet. Render support includes Direct11/12, Vulkan, and OpenGL. I haven't been able to test on Vulkan or OpenGL since I don't have a device with those SDK's. Base libraries are built with NetStandard 2.0 some it shoulld support most standard .Net Framwork versions.
+Testing done on Unity versions 2018.1 through Current. Require's a game using .NetStandard or .Net 4, since base libraries don't support .Net 3.5. Does not support 32bit yet. Render support includes Direct11/12, Vulkan, and OpenGL. I haven't been able to test on Vulkan or OpenGL since I don't have a device with those SDK's. Base libraries are built with NetStandard 2.0 some it shoulld support most standard .Net Framwork versions.
 
 ![alt text](https://i.imgur.com/TRN03cZ.png)
 
