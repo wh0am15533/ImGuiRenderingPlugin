@@ -48,7 +48,7 @@ namespace Trainer
 
                 //MAIN WINDOW #0
                 MainWindow = new Rect(MainWindow.x, MainWindow.y, 250f, 50f);
-                MainWindow = GUILayout.Window(777, MainWindow, new GUI.WindowFunction(RenderUI), "Railway Islands Trainer v1", titleStyle, new GUILayoutOption[0]);
+                MainWindow = GUILayout.Window(777, MainWindow, new GUI.WindowFunction(RenderUI), "Example Trainer v1", titleStyle, new GUILayoutOption[0]);
             }
 
         }
