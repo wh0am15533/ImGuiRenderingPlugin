@@ -7,30 +7,42 @@ namespace Trainer.DearImGui
     {
         #region[Declarations]
 
-        // Event Support
-        public static event Action Layout;
-        internal static void DoLayout() => Layout?.Invoke();
+        public static ImGuiDemoWindow instance;
+
+        // Event Support - ref: https://github.com/psydack/uimgui
+        public event Action Layout;
+        internal static void DoLayout() => instance.Layout?.Invoke();
 
         // Cannot be Null, Else OnPostRender won't fire
-        public Camera cam = null;
+        private Camera _cam = null;
+        public Camera cam
+        {
+            get { return _cam; }
+            set { _cam = value; }
+        }
 
         #endregion
 
         public ImGuiDemoWindow(IntPtr ptr) : base(ptr)
         {
-
+            instance = this;
         }
 
         public void Awake()
         {
-            cam = gameObject.GetComponent<Camera>();
-            //cam.depth = 100f;
+            if (!gameObject.HasComponent<Camera>()) { cam = gameObject.AddComponent<Camera>(); }
+            else { cam = gameObject.GetComponent<Camera>(); }
+            cam.depth = 100f;
+            cam.clearFlags = CameraClearFlags.Nothing;
         }
 
         // These basically just update the Coroutine for Rendering
         public void Update()
         {
-            DoLayout();
+            // TODO: Add Do Global Event
+            //DoLayout();
+            Layout?.Invoke();
+
             Tools.Il2CppCoroutine.Process();
         }
         public void FixedUpdate()

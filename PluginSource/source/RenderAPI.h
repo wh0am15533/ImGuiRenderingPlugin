@@ -29,7 +29,11 @@ public:
 	virtual ImTextureID CreateImGuiFontsTexture(void* pixels, int width, int height, int bytesPerPixel) = 0;
     virtual void ProcessImGuiCommandList(ImDrawData* drawData) = 0;
 
-	virtual void FlipMatrix() = 0;
+	virtual void FlipMatrix() = 0; // Add J.E
+	virtual void ToggleScissors() = 0; // Add J.E
+	//float matrix[4][4]; // Added J.E
+
+	virtual void CreateResources() = 0; // Added to expose it for Scissor toggle. J.E
 };
 
 

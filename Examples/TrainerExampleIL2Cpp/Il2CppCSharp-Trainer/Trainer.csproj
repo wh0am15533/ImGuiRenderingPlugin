@@ -149,6 +149,9 @@
     <None Include="ILRepack.targets" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="DearImGui\imgui_demo.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "C:\Users\James\Documents\Visual Studio 2017\Projects\IMGUI Testing\UnityImGUI\ImGuiRenderingPlugin\Examples\TrainerExampleIL2Cpp\bin\Release\Trainer.dll" "C:\Games\Bloons TD 6\BepInEx\plugins\" /Y</PostBuildEvent>

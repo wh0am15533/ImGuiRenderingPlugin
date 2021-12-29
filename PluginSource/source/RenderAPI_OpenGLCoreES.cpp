@@ -41,7 +41,8 @@ public:
 	ImTextureID CreateImGuiFontsTexture(void* pixels, int width, int height, int bytesPerPixel) override;
     virtual void ProcessImGuiCommandList(ImDrawData* drawData);
 
-	void FlipMatrix();
+	void FlipMatrix(); // Added J.E
+	void ToggleScissors(); // Added J.E
 
 private:
 	void CreateResources();
@@ -212,6 +213,12 @@ static bool imgui_FlipMatrix = false; // J.E
 void RenderAPI_OpenGLCoreES::FlipMatrix() // J.E
 {
 	imgui_FlipMatrix = !imgui_FlipMatrix;
+}
+
+static bool imgui_UseScissors = true; // J.E
+void RenderAPI_OpenGLCoreES::ToggleScissors() // J.E
+{
+	imgui_UseScissors = !imgui_UseScissors;
 }
 
 #endif // #if SUPPORT_OPENGL_UNIFIED

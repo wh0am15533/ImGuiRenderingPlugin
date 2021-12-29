@@ -27,9 +27,12 @@ public:
     void ProcessImGuiCommandList(ImDrawData* drawData) override;
 
 	void FlipMatrix(); // J.E
+	void ToggleScissors(); // J.E
+
+	void CreateResources(); // Moved from Private - J.E
 
 private:
-	void CreateResources();
+
 	void ReleaseResources();
 
 private:
@@ -105,7 +108,6 @@ void RenderAPI_D3D11::ProcessDeviceEvent(UnityGfxDeviceEventType type, IUnityInt
 typedef unsigned short ImDrawIdx;
 #endif
 
-
 struct VERTEX_CONSTANT_BUFFER
 {
     float        mvp[4][4];
@@ -131,6 +133,8 @@ static int g_IndexBufferSize = 10000;
 //END IMGUI VARS
 
 static bool imgui_FlipMatrix = false; // J.E
+static bool imgui_UseScissors = true; // J.E
+//static float matrix[4][4]{}; // J.E
 
 void RenderAPI_D3D11::CreateResources()
 {
@@ -194,7 +198,7 @@ void RenderAPI_D3D11::CreateResources()
         ZeroMemory(&desc, sizeof(desc));
 		desc.FillMode = D3D11_FILL_SOLID; //D3D11_FILL_WIREFRAME;
         desc.CullMode = D3D11_CULL_NONE;
-        desc.ScissorEnable = false; // EDIT HERE: J.E - If enabled the contents of window get culled. IL2CPP
+        desc.ScissorEnable = imgui_UseScissors; // EDIT HERE: J.E - If enabled the contents of window get culled. IL2CPP
         desc.DepthClipEnable = true;
         m_Device->CreateRasterizerState(&desc, &g_pRasterizerState);
     }
@@ -348,7 +352,6 @@ void RenderAPI_D3D11::ProcessImGuiCommandList(ImDrawData* drawData)
     //// Create and grow vertex/index buffers if needed
     if (!g_pVB || g_VertexBufferSize < drawData->TotalVtxCount)
     {
-        //DebugInUnity("test")
         if (g_pVB) { g_pVB->Release(); g_pVB = NULL; }
         g_VertexBufferSize = drawData->TotalVtxCount + 5000;
         D3D11_BUFFER_DESC desc;
@@ -409,6 +412,7 @@ void RenderAPI_D3D11::ProcessImGuiCommandList(ImDrawData* drawData)
 		// Inverted Window Fix (Expanded for Depth) - J.E.
 		float depth = 0.7f;
 		float finalDepth = GetUsesReverseZ() ? 1.0f - depth : depth;
+		// Added J.E for Matrix Flipping
 		float mvpInvertY[4][4] =
 		{
 			{ 2.0f / (R - L), 0.0f, 0.0f, 0.0f },
@@ -417,12 +421,13 @@ void RenderAPI_D3D11::ProcessImGuiCommandList(ImDrawData* drawData)
 			{ (R + L) / (L - R), -((T + B) / (B - T)), finalDepth, 1.0f },
 		};
 
+		// Orig Matrix
 		float mvp[4][4] =
 		{
 			{ 2.0f / (R - L), 0.0f, 0.0f, 0.0f },
 			{ 0.0f, 2.0f / (T - B), 0.0f, 0.0f },
 			{ 0.0f, 0.0f, 0.5f, 0.0f },
-			{ (R + L) / (L - R), (T + B) / (B - T), 0.5f, 1.0f },
+			{ -1.0f, 1.0f, 0.5f, 1.0f },
 		};
 
 		/* Inverted Window Fix - J.E.
@@ -451,13 +456,15 @@ void RenderAPI_D3D11::ProcessImGuiCommandList(ImDrawData* drawData)
             { (R + L)/(L - R), (T + B)/(B - T), 0.5f, 1.0f },
         };
 		*/
-		
-		if (imgui_FlipMatrix)
+
+		if (imgui_FlipMatrix) // Added J.E
 		{
+			//memcpy(matrix, mvpInvertY, sizeof(mvpInvertY)); // J.E
 			memcpy(&constant_buffer->mvp, mvpInvertY, sizeof(mvpInvertY));
 		}
 		else
 		{
+			//memcpy(matrix, mvp, sizeof(mvp)); // J.E
 	        memcpy(&constant_buffer->mvp, mvp, sizeof(mvp));
 		}
         
@@ -513,7 +520,8 @@ void RenderAPI_D3D11::ProcessImGuiCommandList(ImDrawData* drawData)
 	vp.Height = drawData->DisplaySize.y;
     vp.MinDepth = 0.0f;
     vp.MaxDepth = 1.0f;
-	vp.TopLeftX = vp.TopLeftY = 0.0f;
+	vp.TopLeftX = 0.0f;
+	vp.TopLeftY = 0.0f;
     ctx->RSSetViewports(1, &vp);
 
     //// Bind shader and vertex buffers
@@ -549,9 +557,19 @@ void RenderAPI_D3D11::ProcessImGuiCommandList(ImDrawData* drawData)
             }
             else
             {
-                const D3D11_RECT r = { (LONG)pcmd->ClipRect.x, (LONG)pcmd->ClipRect.y, (LONG)pcmd->ClipRect.z, (LONG)pcmd->ClipRect.w };
+				// Added Scissors Rect Here - J.E ref: https://docs.microsoft.com/en-us/windows/win32/direct3d11/d3d10-graphics-programming-guide-rasterizer-stage-getting-started
+				//D3D11_RECT rects[1];
+				//rects[0].left = 0;
+				//rects[0].right = drawData->DisplaySize.x; // Width
+				//rects[0].top = 0;
+				//rects[0].bottom = drawData->DisplaySize.y; // Height
+				//-------------------------
+				
+				const D3D11_RECT r = { (LONG)0, (LONG)drawData->DisplaySize.x, (LONG)0, (LONG)drawData->DisplaySize.y };
+				//const D3D11_RECT r = { (LONG)drawData->DisplaySize.x, (LONG)pcmd->ClipRect.y, (LONG)drawData->DisplaySize.y, (LONG)pcmd->ClipRect.w };
+                //const D3D11_RECT r = { (LONG)pcmd->ClipRect.x, (LONG)pcmd->ClipRect.y, (LONG)pcmd->ClipRect.z, (LONG)pcmd->ClipRect.w }; // Orig
                 ctx->PSSetShaderResources(0, 1, (ID3D11ShaderResourceView * *)& pcmd->TextureId);
-                ctx->RSSetScissorRects(1, &r);
+				ctx->RSSetScissorRects(1, &r);
                 ctx->DrawIndexed(pcmd->ElemCount, idx_offset, vtx_offset);
             }
             idx_offset += pcmd->ElemCount;
@@ -582,6 +600,11 @@ void RenderAPI_D3D11::ProcessImGuiCommandList(ImDrawData* drawData)
 void RenderAPI_D3D11::FlipMatrix() // J.E
 {
 	imgui_FlipMatrix = !imgui_FlipMatrix;
+}
+
+void RenderAPI_D3D11::ToggleScissors() // J.E
+{
+	imgui_UseScissors = !imgui_UseScissors;
 }
 
 #endif // #if SUPPORT_D3D11

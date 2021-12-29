@@ -10,6 +10,8 @@ Example projects for both IL2Cpp and Mono are included. They were designed to su
 
 Testing done on Unity versions 2018.1 through Current. Require's a game using .NetStandard or .Net 4, since base libraries don't support .Net 3.5. Does not support 32bit yet. Render support includes Direct11/12, Vulkan, and OpenGL. I haven't been able to test on Vulkan or OpenGL since I don't have a device with those SDK's. Base libraries are built with NetStandard 2.0 some it shoulld support most standard .Net Framwork versions.
 
+Note: There's a slight clipping issue in DirectX11 .cpp, something with the Scissors Rect. If someone the knows DirectX better than I, I'm open to comments.
+
 ![alt text](https://i.imgur.com/TRN03cZ.png)
 
 ![alt text](https://i.imgur.com/Kd8qAcW.png)

@@ -246,5 +246,153 @@ extern "C" ImTextureID UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GenerateImGuiF
 
 extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API FlipMatrix()
 {
+	DebugInUnity("Flip Matrix", 1);
 	s_CurrentAPI->FlipMatrix();
 }
+
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API ToggleScissors()
+{
+	DebugInUnity("Toggle Scissors", 1);
+	s_CurrentAPI->ToggleScissors();
+	s_CurrentAPI->CreateResources();
+}
+
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetScissorRect()
+{
+	for (int i = 0; i < s_drawData->CmdListsCount; ++i)
+	{
+		// Test Scissor Clip Rect Size J.E
+		const ImDrawList* cmd_list = s_drawData->CmdLists[i];
+		for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+		{
+			const ImDrawCmd* pcmd = &cmd_list->CmdBuffer.Data[cmd_i];
+			if (pcmd->UserCallback)
+			{
+				//pcmd->UserCallback(cmd_list, pcmd);
+			}
+			else
+			{
+				char left[10]; //size of the number
+				sprintf(left, "%g", pcmd->ClipRect.x);
+
+				char top[10];
+				sprintf(top, "%g", pcmd->ClipRect.y);
+
+				char right[10];
+				sprintf(right, "%g", pcmd->ClipRect.z);
+
+				char bottom[10];
+				sprintf(bottom, "%g", pcmd->ClipRect.w);
+
+				char str1[80];
+				strcpy(str1, "Left: ");
+				strcat(str1, left);
+				strcat(str1, " Top: ");
+				strcat(str1, top);
+				strcat(str1, " Right: ");
+				strcat(str1, right);
+				strcat(str1, " Bottom: ");
+				strcat(str1, bottom);
+
+				DebugInUnity(str1, 1);
+			}
+		}
+	}
+}
+
+/*
+extern "C" uint64_t UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetMatrix()
+{
+	DebugInUnity("Getting Matrix", 1);
+
+	float L = 0.0f;
+	float R = s_drawData->DisplaySize.x;
+	float B = s_drawData->DisplaySize.y;
+	float T = 0.0f;
+
+	float depth = 0.7f;
+	float finalDepth = s_CurrentAPI->GetUsesReverseZ() ? 1.0f - depth : depth;
+	float mvpInvertY[4][4] =
+	{
+		{ 2.0f / (R - L), 0.0f, 0.0f, 0.0f },
+		{ 0.0f, -(2.0f / (T - B)), 0.0f, 0.0f },
+		{ 0.0f, 0.0f, 1.0f, 0.0f },
+		{ (R + L) / (L - R), -((T + B) / (B - T)), finalDepth, 1.0f },
+	};
+
+	char lineOne[35];
+	strcpy(lineOne, "Line 1: ");
+	char lineOneVal1[10];
+	sprintf(lineOneVal1, "%g", 2.0f / (R - L));
+	strcat(lineOne, lineOneVal1);
+	strcat(lineOne, "f, 0.0f, 0.0f, 0.0f");
+	DebugInUnity(lineOne, 2);
+
+	char lineTwo[35];
+	strcpy(lineTwo, "Line 2: 0.0f, ");
+	char lineTwoVal2[10];
+	sprintf(lineTwoVal2, "%g", 2.0f / (T - B));//-(2.0f / (T - B))
+	strcat(lineTwo, lineTwoVal2);
+	strcat(lineTwo, "f, 0.0f, 0.0f");
+	DebugInUnity(lineTwo, 2);
+
+	DebugInUnity("Line 3: 0.0f, 0.0f, 1.0f, 0.0f", 2);
+
+	char lineFour[35];
+	strcpy(lineFour, "Line 4: ");
+	char lineFourVal1[10];
+	sprintf(lineFourVal1, "%g", (R + L) / (L - R));
+	strcat(lineFour, lineFourVal1);
+	strcat(lineFour, "f, ");
+	char lineFourVal2[10];
+	sprintf(lineFourVal2, "%g", -((T + B) / (B - T)));
+	strcat(lineFour, lineFourVal2);
+	strcat(lineFour, "f, ");
+	char lineFourVal3[10];
+	sprintf(lineFourVal3, "%g", finalDepth);
+	strcat(lineFour, lineFourVal3);
+	strcat(lineFour, "f, 1.0f");
+	DebugInUnity(lineFour, 2);
+
+	// Orig Matrix
+	float mvp[4][4] =
+	{
+		{ 2.0f / (R - L), 0.0f, 0.0f, 0.0f },
+		{ 0.0f, 2.0f / (T - B), 0.0f, 0.0f },
+		{ 0.0f, 0.0f, 0.5f, 0.0f },
+		{ (R + L) / (L - R), (T + B) / (B - T), 0.5f, 1.0f },
+	};
+
+	char olineOne[35];
+	strcpy(olineOne, "Line 1: ");
+	char olineOneVal1[10];
+	sprintf(olineOneVal1, "%g", 2.0f / (R - L));
+	strcat(olineOne, olineOneVal1);
+	strcat(olineOne, "f, 0.0f, 0.0f, 0.0f");
+	DebugInUnity(olineOne, 2);
+
+	char olineTwo[35];
+	strcpy(olineTwo, "Line 2: 0.0f, ");
+	char olineTwoVal2[10];
+	sprintf(olineTwoVal2, "%g", 2.0f / (T - B));
+	strcat(olineTwo, olineTwoVal2);
+	strcat(olineTwo, "f, 0.0f, 0.0f");
+	DebugInUnity(olineTwo, 2);
+
+	DebugInUnity("Line 3: 0.0f, 0.0f, 0.5f, 0.0f", 2);
+
+	char olineFour[35];
+	strcpy(olineFour, "Line 4: ");
+	char olineFourVal1[10];
+	sprintf(olineFourVal1, "%g", (R + L) / (L - R));
+	strcat(olineFour, olineFourVal1);
+	strcat(olineFour, "f, ");
+	char olineFourVal2[10];
+	sprintf(olineFourVal2, "%g", (T + B) / (B - T));
+	strcat(olineFour, olineFourVal2);
+	strcat(olineFour, "f, 0.5f, 1.0f");
+	DebugInUnity(olineFour, 2);
+
+	return reinterpret_cast<uint64_t>(s_CurrentAPI->matrix);
+}
+*/

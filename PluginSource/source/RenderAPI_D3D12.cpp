@@ -218,10 +218,13 @@ public:
     void ProcessImGuiCommandList(ImDrawData* drawData) override;
 
 	void FlipMatrix(); // J.E
+	void ToggleScissors(); // J.E
+
+	void CreateResources(); // Moved from Private J.E
 
 private:
 	ID3D12Resource* GetUploadResource(UINT64 size);
-	void CreateResources();
+
 	void ReleaseResources();
     void ImGui_ImplDX12_SetupRenderState(ImDrawData* draw_data, FrameResources* fr);
 
@@ -259,6 +262,7 @@ private:
 };
 
 static bool imgui_FlipMatrix = false; // J.E
+static bool imgui_UseScissors = true; // J.E
 
 void RenderAPI_D3D12::ImGui_ImplDX12_SetupRenderState(ImDrawData* draw_data, RenderAPI_D3D12::FrameResources* fr)
 {
@@ -920,6 +924,11 @@ void RenderAPI_D3D12::ProcessImGuiCommandList(ImDrawData* drawData)
 void RenderAPI_D3D12::FlipMatrix() // J.E
 {
 	imgui_FlipMatrix = !imgui_FlipMatrix;
+}
+
+void RenderAPI_D3D12::ToggleScissors() // J.E
+{
+	imgui_UseScissors = !imgui_UseScissors;
 }
 
 #endif // #if SUPPORT_D3D12
