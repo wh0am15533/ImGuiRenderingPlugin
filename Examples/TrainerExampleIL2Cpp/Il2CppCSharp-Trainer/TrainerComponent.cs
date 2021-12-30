@@ -4,6 +4,9 @@ using System;
 //using UnityEngine.InputSystem; // New Unity InputSystem
 using UnityEngine;
 using ImGuiNET;
+using System.Runtime.InteropServices;
+using System.IO;
+using System.Linq;
 
 #endregion
 
@@ -21,6 +24,13 @@ namespace Trainer
         private static BepInEx.Logging.ManualLogSource log;
 
         #endregion
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetDllDirectory(string lpPathName);
+
+        [DllImport("kernel32", SetLastError = true)]
+        static extern IntPtr LoadLibrary(string lpFileName);
 
         private GameObject imguihook = null;
         private DearImGui.ImGuiDemoWindow mainWindow = null;
@@ -40,6 +50,11 @@ namespace Trainer
         {
             log = BepInExLoader.log;
             instance = this;
+
+            // Find cimgui.dll and set path
+            string rootPath = AppDomain.CurrentDomain.BaseDirectory;
+            string file = Directory.GetFiles(rootPath, "cimgui.dll", SearchOption.AllDirectories).FirstOrDefault();
+            if (file != null || file != string.Empty) { var res = SetDllDirectory(System.IO.Path.GetDirectoryName(file)); }
         }
 
         private static void Initialize()

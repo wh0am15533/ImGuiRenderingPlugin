@@ -4,6 +4,9 @@ using System;
 using UnityEngine;
 //using UnityEngine.InputSystem; // New Unity Input system
 using ImGuiNET;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 #endregion
 
 namespace Trainer
@@ -11,6 +14,13 @@ namespace Trainer
     public class TrainerMenu : MonoBehaviour
     {
         #region[Declarations]
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetDllDirectory(string lpPathName);
+
+        [DllImport("kernel32", SetLastError = true)]
+        static extern IntPtr LoadLibrary(string lpFileName);
 
         public static TrainerMenu instance = null;
         public static BepInEx.Logging.ManualLogSource log = Trainer.BepInLoader.log;
@@ -27,6 +37,11 @@ namespace Trainer
 
         private void Start()
         {
+            // Find cimgui.dll and set path
+            string rootPath = AppDomain.CurrentDomain.BaseDirectory;
+            string file = Directory.GetFiles(rootPath, "cimgui.dll", SearchOption.AllDirectories).FirstOrDefault();
+            if (file != null || file != string.Empty) { var res = SetDllDirectory(System.IO.Path.GetDirectoryName(file)); }
+
             MainWindow = new Rect(UnityEngine.Screen.width / 2 - 100, UnityEngine.Screen.height / 2 - 350, 250f, 50f);
             instance = this;
         }
