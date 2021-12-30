@@ -79,18 +79,22 @@ namespace Trainer
             {
                 try
                 {
-                    // Create new DontDestroy GameObject for our Plugins Hook
-                    imguihook = DearImGui.ImGuiPluginHook.Create("ImGuiPluginHook");
-                    DontDestroyOnLoad(imguihook);
+                    if (imguihook == null)
+                    {
+                        // Create new DontDestroy GameObject for our Plugins Hook
+                        imguihook = DearImGui.ImGuiPluginHook.Create("ImGuiPluginHook");
+                        DontDestroyOnLoad(imguihook);
 
-                    // Add our rendering hook
-                    Camera camera = Camera.main;
-                    if (camera == null) { camera = Camera.current; }
-                    if (camera != null) { mainWindow = camera.gameObject.AddComponent<DearImGui.ImGuiDemoWindow>(); }
+                        // Add our rendering hook
+                        Camera camera = Camera.main;
+                        if (camera == null) { camera = Camera.current; }
+                        if (camera != null) { mainWindow = camera.gameObject.AddComponent<DearImGui.ImGuiDemoWindow>(); }
 
-                    // Subscribe to Layout Event (Cleaner, Safe)- Where you place your window layout code.
-                    //DearImGui.ImGuiDemoWindow.Layout += OnLayout;
-                    mainWindow.Layout += OnLayout;
+                        // Subscribe to Layout Event (Cleaner, Safe)- Where you place your window layout code.
+                        //DearImGui.ImGuiDemoWindow.Layout += OnLayout;
+                        mainWindow.Layout += OnLayout;
+                    }
+                    else { log.LogWarning("IMGUI is Already Loaded!"); DearImGui.ImGuiDemoWindow.show = !DearImGui.ImGuiDemoWindow.show; }
                 }
                 catch (Exception e) { log.LogError("ERROR: " + e.Message); }
 

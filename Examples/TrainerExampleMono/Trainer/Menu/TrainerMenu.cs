@@ -80,20 +80,24 @@ namespace Trainer
                     {
                         try
                         {
-                            // Create new DontDestroy GameObject for our Plugins Hook
-                            imguihook = new GameObject("ImGuiPluginHook", typeof(DearImGui.ImGuiPluginHook));
-                            DontDestroyOnLoad(imguihook);
-
-                            // Add our rendering hook
-                            Camera cam = Camera.main;
-                            if (cam == null) { cam = Camera.current; }
-                            if (cam != null)
+                            if (imguihook == null)
                             {
-                                mainWindow = cam.gameObject.AddComponent<DearImGui.ImGuiDemoWindow>();
-                            }
+                                // Create new DontDestroy GameObject for our Plugins Hook
+                                imguihook = new GameObject("ImGuiPluginHook", typeof(DearImGui.ImGuiPluginHook));
+                                DontDestroyOnLoad(imguihook);
 
-                            // Subscribe to Layout Event (Cleaner, Safe)- Where you place your window layout code.
-                            mainWindow.Layout += OnLayout;
+                                // Add our rendering hook
+                                Camera cam = Camera.main;
+                                if (cam == null) { cam = Camera.current; }
+                                if (cam != null)
+                                {
+                                    mainWindow = cam.gameObject.AddComponent<DearImGui.ImGuiDemoWindow>();
+                                }
+
+                                // Subscribe to Layout Event (Cleaner, Safe)- Where you place your window layout code.
+                                mainWindow.Layout += OnLayout;
+                            }
+                            else { log.LogWarning("IMGUI is Already Loaded!"); DearImGui.ImGuiDemoWindow.show = !DearImGui.ImGuiDemoWindow.show; }
                         }
                         catch (Exception e) { log.LogError("ERROR: " + e.Message); }
                     }

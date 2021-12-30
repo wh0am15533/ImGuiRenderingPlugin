@@ -10,6 +10,8 @@ namespace Trainer.DearImGui
 
         public static ImGuiDemoWindow instance;
 
+        public static bool show = true;
+
         // Event Support - ref: https://github.com/psydack/uimgui
         public event Action Layout;
         internal static void DoLayout() => instance.Layout?.Invoke();
@@ -39,9 +41,12 @@ namespace Trainer.DearImGui
 
         public void Update()
         {
-            // TODO: Add Do Global Event
-            //DoLayout();
-            Layout?.Invoke();
+            if (show)
+            {
+                // TODO: Add Do Global Event
+                //DoLayout();
+                Layout?.Invoke();
+            }
         }
 
         public void FixedUpdate()
